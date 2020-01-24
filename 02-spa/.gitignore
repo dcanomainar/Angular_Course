@@ -8,8 +8,6 @@
 /bazel-out
 
 # dependencies
-01-Hello-World/node_modules
-02-spa/node_modules
 /node_modules
 
 # profiling files
