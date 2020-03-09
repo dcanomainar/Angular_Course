@@ -1,1 +1,17 @@
-<p>heroes works!</p>
+<h1>Heroes</h1><small>From anywhere</small>
+
+<hr/>
+
+<div class="card-columns">
+    <div class="card" *ngFor="let heroe of heroes; let i = index">
+        <img class="card-img-top" src="{{ heroe.img }}" alt="{{ heroe.nombre }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ heroe.nombre }}</h5>
+            <p class="card-text">{{ heroe.bio }}</p>
+            <p class="card-text"><small class="text-muted">{{ heroe.aparicion }}</small></p>
+
+            <button (click)="seeHeroe(i)" type="button" class="bnt btn-outline-primary btn-block">See more...</button>
+            <!-- <a [routerLink]="['/heroe', i]" class="btn btn-outline-primary btn-block">See more...</a> -->
+        </div>
+    </div>
+</div>
