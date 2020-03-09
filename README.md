@@ -166,4 +166,3 @@ export const app_routing = RouterModule.forRoot(APP_ROUTES);
 ```html
 <p class="animated fadeIn fast">about works!</p>
 ```
-
