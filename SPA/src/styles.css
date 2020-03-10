@@ -32,3 +32,8 @@ body {
 .fadeIn {
     animation-name: fadeIn;
 }
+
+.resizeImage {
+    max-width: 30%;
+    height: auto;
+}
