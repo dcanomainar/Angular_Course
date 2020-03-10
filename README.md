@@ -1,8 +1,38 @@
 # Angular development
 
-## 0. Configure Visual Studio Code to work with Angular
+## 0. Prerequirements
 
-(Specify here what is needed)
+### 0.1.  Visual Studio Code
+
+(Stuff to be written)
+
+### 0.2. Create a new Angular application
+
+In order to create a new Angular application, we will require to use the cmd (if we are in windows) or the bash (if we are in linux). If you are using Mac, I don't know how it works, so check it out in internet.
+After you open your command line prompt, you will need to move to the folder you are interested on to create the project and write the following command:
+
+```
+ng new name
+```
+Where name will be the name that you will give to your project.
+
+After this, you will be asked if you want to use routing. We won't need it this way, so you will have to specify that no.
+
+Finally you will be asked which type of css will we use. We will require the default, so just press enter, and that's it. We will have in a few minutes a new Angular project created with the basics.
+
+### 0.3. Deploy angular application locally
+
+(Stuff to be written)
+
+### 0.4. Build application
+
+(Stuff to be written)
+
+### 0.5. Work with Firebase
+
+(Stuff to be written)
+
+npm install -g firebase-tools
 
 ## 1. Start a new application (SPA)
 
@@ -96,17 +126,32 @@
         { path: '**', pathMatch: 'full', redirectTo: 'home' }
     ];
 
-    export const app_routing = RouterModule.forRoot(APP_ROUTES);
+    export const APP_ROUTING = RouterModule.forRoot(APP_ROUTES);
     ```
 
-3. Move to app.module.ts
+3. Move to app.module.ts and import the new app.routes file
 
-4. Import the new app.routes file
-    ```ts
-     import { APP_ROUTING } from './app.routes';
-    ```
+   ```ts
+    import { APP_ROUTING } from './app.routes';
+   ```
 
-5. Add the import into the imports of the NgModule
+   You will need to add the APP_ROUTING into the @NgModule imports like this:
+
+   ```ts
+   @NgModule({
+     declarations: [
+   	{{whatever}}
+     ],
+     imports: [
+       {{whatever}}
+       APP_ROUTING
+     ],
+     providers: [
+         {{whatever}}
+     ],
+     bootstrap: [AppComponent]
+   })  
+   ```
 
 6. Move to the app.component.html and add this:
     ```html
@@ -168,7 +213,7 @@
         And we will inject it in our constructor:
 
         ```ts
-        constructor(private _heroesService: HeroesService, private router: Router) {}
+        constructor(private router: Router) {}
         ```
 
         So now we can use it in our function like this:
@@ -287,7 +332,20 @@ If we want to load dynamically a lot of information without having to write them
     <p class="card-text">{{ heroe.bio }}</p>
     <p class="card-text"><small class="text-muted">{{ heroe.aparicion }}</small></p>
     ```
-## 8. ActivatedRoute
+## 8. NgIf
+
+As we have work with ngFor which allows us to work with loops, we can work with conditions, so we can, for example, show information that we would like to appear, but only if fulfil a determinated condition. So, if we want to use it, then:
+
+1. We will need to use it this way:
+
+   ```html
+   <img *ngIf="heroe.casa == 'DC'" class="resizeImage" src="../../../assets/img/DC.jpg" alt="DC">
+   <img *ngIf="heroe.casa == 'Marvel'" class="resizeImage" src="../../../assets/img/Marvel.jpg" alt="Marvel">
+   ```
+
+   As we can see, we will only show the first element, if 'heroe.casa' equals to 'DC', and we will only show the second element if 'heroe.casa' equals 'Marvel'.
+
+## 9. ActivatedRoute
 
 If we want to obtain the parameter from the url, we will require to work with the ActivatedRoute.
 
@@ -330,3 +388,55 @@ If we want to obtain the parameter from the url, we will require to work with th
           });
       }
       ```
+
+   Now we will need to use this information that we obtained and print this information in our html (or whatever that we need to do with it).
+
+## 10. Pipes
+
+Pipes allows us to transform displayed values using templates, so we are able to transform values of type currency, date, decimal, percent, json, or even make other type of transformations like to uppercase, lowecase, etc.
+
+An example of how to transform a date and show only the year can be the following:
+
+   ```html
+<small>{{ heroe.aparicion | date:'y' }}</small>
+   ```
+
+If we want to transform a string to uppercase, we have to use it this way:
+
+```html
+<h1>{{ heroe.nombre | uppercase }}</h1>
+```
+
+## 11. Search
+
+If we want to implement a way to make a search in Angular, we can use, for example, an input of type text and a button in this way:
+
+1. First of all, we may need to implement an input and a button in this way:
+
+```html
+<input class="form-control mr-sm-2" type="text" placeholder="Search (keyup.enter)="searchHeroe(searchText.value)" #searchText />
+
+<button (click)="searchHeroe(searchText.value)" class="btn btn-outline-primary my-2 my-sm-0" type="button">Search</button>
+```
+
+As we can see, we have implemented a (keyup.enter)="function(value)" which will be the event that will executes when we press the enter key and will take the #searchText. It's very important that we add this tag, because without it, we won't be able to obtain the value of the input and send it to the function.
+In the button, we have implemented a (click) function, which, as we can see, works equally as the input.
+
+2. After this we need to implement the function that will be able to return us the list of elements that have a coincidence with the value we introduced in the input text. A possible aproach can be this one:
+
+   ```ts
+   searchHeroe(value: string) {
+       const heroesFound: Heroe[] = [];
+       value = value.toLowerCase();
+   
+       for (const heroe of this._heroes) {
+           if (heroe.nombre.toLowerCase().indexOf(value) >= 0) {
+               heroesFound.push(heroe);
+           }
+       }
+   
+       return heroesFound;
+   }
+   ```
+
+After this point, we may want to redirect to another component after making click on the button and pass this text that we want to search. If we want to do that, then we will need to repeat the same steps wa have done in the Routes and ActivatedRoute.
