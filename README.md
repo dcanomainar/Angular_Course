@@ -71,8 +71,8 @@ npm install -g firebase-tools
      ```
 ### Option 2
   1. Download the full bootstrap library
-    2. Create a new folder called libs inside of the assets folder and copy the content
-    3. Write this lines inside the index.html
+        2. Create a new folder called libs inside of the assets folder and copy the content
+            3. Write this lines inside the index.html
 
 ### Option 3
 
@@ -405,6 +405,44 @@ If we want to transform a string to uppercase, we have to use it this way:
 
 ```html
 <h1>{{ heroe.nombre | uppercase }}</h1>
+```
+
+### uppercase
+
+This pipe allows us to format a string and put it all to upper case.
+
+```
+{{ value | uppercase }}
+```
+
+### lowercase
+
+This pipe allows us to format a string and put it all to lower case.
+
+```
+{{ value | uppercase }}
+```
+
+### slice
+
+This pipe allows us to 'slice' a string from the beginning giving a number where will 'slice it'.
+
+```
+{{ value | slice:3 }}
+```
+
+This pipe can also be used with arrays and obtain the 3 first elements like this:
+
+```
+<td>{{ array | slice:0:3 }}</td>
+```
+
+Or even slice a ngFor like this:
+
+```
+<ul>
+	<li *ngFor="let item of array | slice:5:20">{{ item }}</li>
+</ul>
 ```
 
 ## 11. Search
