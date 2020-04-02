@@ -440,3 +440,17 @@ In the button, we have implemented a (click) function, which, as we can see, wor
    ```
 
 After this point, we may want to redirect to another component after making click on the button and pass this text that we want to search. If we want to do that, then we will need to repeat the same steps wa have done in the Routes and ActivatedRoute.
+
+## X. Auto reload for clients after deploy
+
+https://blog.nodeswat.com/automagic-reload-for-clients-after-deploy-with-angular-4-8440c9fdd96c
+
+1. ng build --prod
+2. dist/<<project-name>>/main.somehash.js
+
+## XX. Other commands
+
+ng lint --format=stylish
+
+ng test --watch=false --code-coverage
+
