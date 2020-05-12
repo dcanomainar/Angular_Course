@@ -1,5 +1,9 @@
 # Angular development
 
+
+
+[TOC]
+
 ## 0. Prerequirements
 
 ### 0.1.  Visual Studio Code
