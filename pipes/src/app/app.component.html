@@ -13,6 +13,11 @@
             </thead>
             <tbody>
                 <tr>
+                    <td>{{ nombre2 }}</td>
+                    <td>uppercase</td>
+                    <td>{{ nombre2 | capitalized:true }}</td>
+                </tr>
+                <tr>
                     <td>{{ nombre }}</td>
                     <td>uppercase</td>
                     <td>{{ nombre | uppercase }}</td>
@@ -29,8 +34,74 @@
                 </tr>
                 <tr>
                     <td>{{ array }}</td>
-                    <td>slice:3</td>
+                    <td>slice:0:3</td>
                     <td>{{ array | slice:0:3 }}</td>
+                </tr>
+
+                <tr>
+                    <td>{{ pi }}</td>
+                    <td>number</td>
+                    <td>{{ pi | number:'.0-2' }}</td>
+                </tr>
+
+                <tr>
+                    <td>{{ percentage }}</td>
+                    <td>percent</td>
+                    <td>{{ percentage | percent:'2.0-2' }}</td>
+                </tr>
+
+                <tr>
+                    <td>{{ salary }}</td>
+                    <td>currency</td>
+                    <td>{{ salary | currency:'EUR':'symbol-narrow':'.0-0'}}</td>
+                </tr>
+
+                <tr>
+                    <td>{{ valorPromesa }}</td>
+                    <td>async</td>
+                    <td>{{ valorPromesa | async }}</td>
+                </tr>
+
+                <tr>
+                    <td>{{ fecha }}</td>
+                    <td>date</td>
+                    <td>{{ fecha | date }}</td>
+                </tr>
+
+                <tr>
+                    <td>{{ fecha }}</td>
+                    <td>date</td>
+                    <td>{{ fecha | date:'medium' }}</td>
+                </tr>
+
+                <tr>
+                    <td>{{ fecha }}</td>
+                    <td>date</td>
+                    <td>{{ fecha | date:'short' }}</td>
+                </tr>
+
+                <tr>
+                    <td>{{ fecha }}</td>
+                    <td>
+                        date:'MMMM - dd':'':'{{ language }}'
+                        <br>
+                        <button (click)="language = 'es-ES'" class="mr1 btn btn-primary">Spanish</button>
+                        <button (click)="language = 'fr'" class="mr1 btn btn-secondary">French</button>
+                        <button (click)="language = 'en'" class="mr1 btn btn-success">English</button>
+                    </td>
+                    <td>{{ fecha | date:'MMMM - dd':'':language }}</td>
+                </tr>
+
+                <tr>
+                    <td>{{ nombre }}</td>
+                    <td>
+                        password:{{activar}}
+                        <br>
+                        <button (click)="activar = !activar" class="btn btn-outline-primary">
+                            Activar/Desactivar
+                        </button>
+                    </td>
+                    <td>{{ nombre | securize:activar }}</td>
                 </tr>
             </tbody>
         </table>
@@ -39,5 +110,25 @@
         <ul>
             <li *ngFor="let item of array | slice:5:20">{{ item }}</li>
         </ul>
+
+        <h3>JSON</h3>
+        <hr>
+        <div class="row mb-5">
+            <div class="col">
+                <pre>
+                {{ heroe | json }}
+                </pre>
+            </div>
+        </div>
+
+        <h3 class="mt-4">Domseguro</h3>
+        <hr>
+
+        <div class="row">
+            <div class="col">
+                <iframe width="560" height="315" [src]="videoUrl | domseguro" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                </iframe>
+            </div>
+        </div>
     </div>
 </div>

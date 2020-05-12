@@ -71,8 +71,8 @@ npm install -g firebase-tools
      ```
 ### Option 2
   1. Download the full bootstrap library
-    2. Create a new folder called libs inside of the assets folder and copy the content
-    3. Write this lines inside the index.html
+        2. Create a new folder called libs inside of the assets folder and copy the content
+            3. Write this lines inside the index.html
 
 ### Option 3
 
@@ -407,6 +407,211 @@ If we want to transform a string to uppercase, we have to use it this way:
 <h1>{{ heroe.nombre | uppercase }}</h1>
 ```
 
+If we want to transform a string to lowercase, we have to use it this way:
+
+```html
+<h1>{{ heroe.nombre | lowercase }}</h1>
+```
+
+### 10.1. Slice
+
+If we want to catch a fragment of a string or an array, we have to use it this way:
+
+This way we obtain the first three elements: 
+
+```html
+<h1>{{ heroe.nombre | slice:3 }}</h1>
+```
+
+This way we obtain the elements between the position zero and position three: 
+
+```html
+<h1>{{ heroe.nombre | slice:0:3 }}</h1>
+```
+
+### 10.2. Decimal
+
+If we want to convert an element to a number type with just 3 decimals, then we will do it like this:
+
+```html
+<td>{{ pi | number }}</td>
+```
+
+If we want to obtain only the integer part, then we will have to put:
+
+```html
+<td>{{ pi | number:'1.0-0' }}</td>
+```
+
+If we want to obtain three integer positions:
+
+```html
+<td>{{ pi | number:'3.0-0' }}</td>
+```
+
+If we want to obtain all integer numbers and only two decimals:
+
+```html
+<td>{{ pi | number:'.0-2' }}</td>
+```
+
+### 10.3. Percentage
+
+If we want to convert an element to percentage, we will have to put it like this:
+
+```html
+<td>{{ percentage | percent }}</td>
+```
+
+And if we want to show one decimal, then we will have to put it like this;
+
+```html
+<td>{{ percentage | percent:'2.0-2' }}</td>
+```
+
+### 10.4. Currency
+
+If we want to convert an element to a type currency, then:
+
+```html
+<td>{{ salary | currency }}</td>
+```
+
+If we want to work with other type of currencies, then we will have to work with the standard [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217):
+
+```html
+<td>{{ salary | currency:'EUR' }}</td>
+```
+
+If we want it without decimals, then we will have to work with more than one argument like this:
+
+```html
+<td>{{ salary | currency:'EUR':'symbol-narrow':'.0-0' }}</td>
+```
+
+### 10.4. Json
+
+If we want to parse json code and see its content, then:
+
+```html
+<td>{{ heroe | json }}</td>
+```
+
+If we are working with bootstrap, we can use the tag pre wich allows us to see it with a better format.
+
+### 10.4. Async
+
+This pipe doesn't work with arguments, but we have an expression.
+If we want to work with it, we will have to construct a promise or an observable and we will obtain the data from any http response:
+
+```html
+<td>{{ promise | async  }}</td>
+```
+
+### 10.5 Date
+
+If we want to parse a date, then we will have to work like this:
+
+```html
+<td>{{ birthday: date }}</td>
+```
+This way we will obtain a short date.
+
+We have a lot of configurations, like medium wich will format our date like 'MMM d, y, hh:mm:ss a':
+
+```html
+<td>{{ birthday: date:medium }}</td>
+```
+
+we have as well the type short, wich will format our date like 
+'M/d/yy, hh:mm a':
+
+```html
+<td>{{ birthday: date:short }}</td>
+```
+
+And of course, if we want to work with a custom date, we can use it like this:
+
+```html
+<td>{{ birthday: date:'MMMM - dd' }}</td>
+```
+
+### 10.6 Custom pipes
+
+If we want to create a new pipe, we will have to execute the following command:
+
+```
+ng g p pipes/nameOfOurPipe
+```
+
+For example, we are going to create a new custom pipe for capitalize a string, so first of all, we are going to execute the command:
+
+```
+ng g p pipes/capitalized
+```
+
+An example of what a custom pipe could be is this:
+
+```typescript
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'capitalized'
+})
+export class CapitalizedPipe implements PipeTransform {
+
+  transform(value: string, all: boolean = true): string {
+    value = value.toLocaleLowerCase();
+    let names = value.split(' ');
+
+    if(all) {
+      names = names.map(name => {
+        return name[0].toUpperCase() + name.substr(1);
+      });
+    }
+    else {
+      names[0] = names[0][0].toUpperCase() + names[0].substr(1);
+    }
+
+    return names.join(' ');
+  }
+}
+```
+
+What this does is transform the entry name and transform each of the words (if 'all' equals true) to upper case and only the first letter of the first word (if 'all' equals false) to upper case.
+
+Now let's see something very useful. Imagine you want to add any external link into your application, like a video from youtube and you just copy the iframe with the src like this:
+
+```html
+<iframe width="560" height="315" src="https://www.youtube.com/embed/PM0HqmptYlY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+```
+As you can see, this iframe contains a src which contains an external url. If we just put it in our page, this will work fine, but we will recieve an alert saying that it is insecure. What we can do is move it to a new variable located in our .component.ts like 'videoUrl', but when we do this, our video won't be visible. This happends because we need to "sanitize it".
+
+In order to make this, we will create a new custom pipe with something like this:
+
+```typescript
+import { Pipe, PipeTransform } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+@Pipe({
+  name: 'domseguro'
+})
+export class DomseguroPipe implements PipeTransform {
+  constructor(private domSanitaizer: DomSanitizer) {
+  }
+
+  transform(value: string, ...args: unknown[]): SafeResourceUrl {
+    return this.domSanitaizer.bypassSecurityTrustResourceUrl(value);
+  }
+}
+```
+
+And if we want to use it, we will have to change our url like this:
+
+```html
+<iframe width="560" height="315" [src]="videoUrl | domseguro" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+```
+
 ## 11. Search
 
 If we want to implement a way to make a search in Angular, we can use, for example, an input of type text and a button in this way:
@@ -441,6 +646,52 @@ In the button, we have implemented a (click) function, which, as we can see, wor
 
 After this point, we may want to redirect to another component after making click on the button and pass this text that we want to search. If we want to do that, then we will need to repeat the same steps wa have done in the Routes and ActivatedRoute.
 
+## 12. Add other languages to our application
+
+First of all, If we want to work with a specific language in our application, then we will have to install this:
+
+1. Execute this command in the console: ng add @angular/localize
+2. Add this lines in the app.module.ts:
+   import { registerLocaleData } from '@angular/common';
+   import localEs from '@angular/common/locales/es';
+   import localFr from '@angular/common/locales/fr';
+3. Create a new function:
+   registerLocaleData(localEs, 'es-ES');
+   registerLocaleData(localFr);
+4. Add to our providers:
+
+```javascript
+providers: [
+    {
+      provide: LOCALE_ID,
+      useValue: 'es-ES'
+    }
+]
+```
+
+In our pipe we can use them like this:
+```html
+<td>{{ birthday | date:'MMMM - dd':'':'es-ES' }}</td>
+```
+```html
+<td>{{ birthday | date:'MMMM - dd':'':'fr' }}</td>
+```
+
+We can even create a new variable called language of type string and setted by default to 'es-ES', and change our language by clicking a button:
+```html
+<tr>
+    <td>{{ birthday }}</td>
+    <td>
+    	date:'MMMM - dd':'':'{{ language }}'
+        <br>
+        <button (click)="language = 'es-ES'" class="mr1 btn btn-primary">Spanish</button>
+        <button (click)="language = 'fr'" class="mr1 btn btn-secondary">French</button>
+        <button (click)="language = 'en'" class="mr1 btn btn-success">English</button>
+    </td>
+    <td>{{ fecha | date:'MMMM - dd':'':language }}</td>
+</tr>
+```
+
 ## X. Auto reload for clients after deploy
 
 https://blog.nodeswat.com/automagic-reload-for-clients-after-deploy-with-angular-4-8440c9fdd96c
@@ -453,4 +704,3 @@ https://blog.nodeswat.com/automagic-reload-for-clients-after-deploy-with-angular
 ng lint --format=stylish
 
 ng test --watch=false --code-coverage
-
