@@ -536,7 +536,7 @@ And of course, if we want to work with a custom date, we can use it like this:
 <td>{{ birthday: date:'MMMM - dd' }}</td>
 ```
 
-### 10.6 Custom pipes
+### 10.6 Custom pipes 
 
 If we want to create a new pipe, we will have to execute the following command:
 
@@ -579,6 +579,8 @@ export class CapitalizedPipe implements PipeTransform {
 ```
 
 What this does is transform the entry name and transform each of the words (if 'all' equals true) to upper case and only the first letter of the first word (if 'all' equals false) to upper case.
+
+### 10.7 DomSanitizer
 
 Now let's see something very useful. Imagine you want to add any external link into your application, like a video from youtube and you just copy the iframe with the src like this:
 
@@ -691,6 +693,67 @@ We can even create a new variable called language of type string and setted by d
     <td>{{ fecha | date:'MMMM - dd':'':language }}</td>
 </tr>
 ```
+
+## 13. Work with HTTP Requests
+
+### 13.0. Configuration
+
+First of all, we will need to import the following module in our app.module.ts and add it into our 'imports' part:
+
+```typescript
+import { HttpClientModule } from '@angular/common/http';
+
+@NgModule({
+  declarations: [],
+  imports: [
+    HttpClientModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+### 13.1. Get Call
+
+After this we will need to add the HttpClient in our constructor of the component where we will use it and we will be ready to work with it:
+
+```typescript
+constructor(private http: HttpClient) {
+    this.http.get('https://restcountries.eu/rest/v2/lang/es')
+      .subscribe(resp => {
+        console.log(resp);
+      });
+  }
+```
+
+This implementation is not the best way to do it. If we want to work with it better, we have to create a new service and import there the 'HttpClient' class. After this, we just have to call the service in our component and inject it in our constructor.
+
+### 13.2 Map Operator
+
+The map operators is a more better way to work with http responses, which allows us to filter them and receive in our components the information we require. In other words, it allows us to filter it.
+
+If we want to work with map so we can use 'observables', we need to import from this library:
+
+```typescript
+import { map } from 'rxjs/operators';
+```
+
+And after this, we need to work with this new feature and use pipe as well, like this:
+
+```typescript
+return this.http.get(url, { headers })
+           .pipe(map((resp: any) => resp.albums.items));
+```
+
+What this does is help us to return the data we are interested on and not all of it.
+
+### 13.3 Automatic authentication with Tokens.
+
+Now if we want to work with tokens, then...
+
+//TODO
+
 
 ## X. Auto reload for clients after deploy
 
