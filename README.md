@@ -1,5 +1,13 @@
 # Angular development
 
+# Table of contents
+
+0. [Preriquirements](## 0. Prerequirements)
+	0.1. [Visual Studio Code](### 0.1. Visual Studio Code)
+	0.2. [Create a new Angular application](### 0.2. Create a new Angular application)
+	0.3. [Deploy angular application locally](### 0.3. Deploy angular application locally)
+	0.4. [Build application](### 0.4. Build application)
+
 ## 0. Prerequirements
 
 ### 0.1.  Visual Studio Code
@@ -347,6 +355,100 @@ As we have work with ngFor which allows us to work with loops, we can work with 
 
    As we can see, we will only show the first element, if 'heroe.casa' equals to 'DC', and we will only show the second element if 'heroe.casa' equals 'Marvel'.
 
+### 7.3. NgStyle
+
+This directive allows us to update the style for an html component dinamically. If we want to use this, then we need to create a new component with the it and is parameter:
+
+   ```
+ng g c components/ngStyle -it -is
+   ```
+
+This will creates us something like this:
+
+   ```ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-ng-style',
+  template: `
+    <p>
+      Hola mundo... esta es una etiqueta
+    </p>
+  `,
+  styles: []
+})
+export class NgStyleComponent {
+  constructor() { }
+}
+   ```
+
+Now we can start to work with ngStyle in two different ways:
+
+1. simple
+
+   ```ts
+   <p [ngStyle]="{ 'font-size': '15px' }">
+   	Hola mundo... esta es una etiqueta
+   </p>
+   ```
+2. advance, which allows us to change the size, for example by creating a new variable named size and with two buttons that allows us to add 1 or subtract 1
+   ```ts
+   <p [style.fontSize.px]="size">
+         Hola mundo... esta es una etiqueta
+   </p>
+   ```
+### 7.4. NgClass
+
+This allows us to add and remove css classes on an HTML element. Example of this:
+
+``` html
+<button type="button" class="btn btn-danger" (click)="danger = !danger" [ngClass]="{ 'btn-danger': danger, 'btn-info': !danger }">Danger</button>
+```
+
+Here we can see a button which has a property called 'ngClass' which whenever the danger (of type boolean) property changes between true and false, it sets or remove one or another class (btn-danger and btn-info)
+
+### 7.5. Custom Directives
+
+If we want to create a custom directive. For this example, we are going to create a directive capable of 'highlight' any element by changing its background. So we need to execute the following command:
+
+   ``` 
+ng g d directives/highlight
+   ```
+
+Which will create a new component of type directive with this style:
+
+```typescript
+import { Directive } from '@angular/core';
+
+@Directive({
+  selector: '[appHighlight]'
+})
+export class HighlightDirective {
+  constructor() { }
+}
+```
+
+Now we will call import the 'ElementRef', and inject it in the constructor. After this, we will call this property and change the backgroundColor property:
+
+```typescript
+import { Directive, ElementRef } from '@angular/core';
+
+@Directive({
+  selector: '[appHighlight]'
+})
+export class HighlightDirective {
+  constructor(private element: ElementRef) {
+    element.nativeElement.style.backgroundColor = 'yellow';
+  }
+}
+```
+
+Finally, we will need to call the property in our html element:
+
+```html
+<p appHighlight>Test</p>
+```
+
 ## 8. ActivatedRoute
 
 If we want to obtain the parameter from the url, we will require to work with the ActivatedRoute.
@@ -369,7 +471,7 @@ If we want to obtain the parameter from the url, we will require to work with th
 
 3. If now we want to obtain some information using this property that we obtained from our parameters, then we will require to implement a new function in our service and inject this service in our constructor so we can use it in this component:
 
-   1. In our service we will create this methdo:
+   1. In our service we will create this method:
 
       ```ts
       getHeroe(idx: string) {
@@ -510,7 +612,7 @@ If we want to work with it, we will have to construct a promise or an observable
 <td>{{ promise | async  }}</td>
 ```
 
-### 9.7 Date
+### 9.7. Date
 
 If we want to parse a date, then we will have to work like this:
 
@@ -538,7 +640,7 @@ And of course, if we want to work with a custom date, we can use it like this:
 <td>{{ birthday: date:'MMMM - dd' }}</td>
 ```
 
-### 9.8 Custom pipes 
+### 9.8. Custom pipes 
 
 If we want to create a new pipe, we will have to execute the following command:
 
@@ -582,7 +684,7 @@ export class CapitalizedPipe implements PipeTransform {
 
 What this does is transform the entry name and transform each of the words (if 'all' equals true) to upper case and only the first letter of the first word (if 'all' equals false) to upper case.
 
-### 9.9 DomSanitizer
+### 9.9. DomSanitizer
 
 Now let's see something very useful. Imagine you want to add any external link into your application, like a video from youtube and you just copy the iframe with the src like this:
 
@@ -731,7 +833,7 @@ constructor(private http: HttpClient) {
 
 This implementation is not the best way to do it. If we want to work with it better, we have to create a new service and import there the 'HttpClient' class. After this, we just have to call the service in our component and inject it in our constructor.
 
-### 12.2 Map Operator
+### 12.2. Map Operator
 
 The map operators is a more better way to work with http responses, which allows us to filter them and receive in our components the information we require. In other words, it allows us to filter it.
 
@@ -750,7 +852,7 @@ return this.http.get(url, { headers })
 
 What this does is help us to return the data we are interested on and not all of it.
 
-### 12.3 Automatic authentication with Tokens.
+### 12.3. Automatic authentication with Tokens.
 
 Now if we want to work with tokens, then...
 
