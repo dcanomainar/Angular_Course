@@ -2,12 +2,6 @@
 
 # Table of contents
 
-0. [Preriquirements](## 0. Prerequirements)
-	0.1. [Visual Studio Code](### 0.1. Visual Studio Code)
-	0.2. [Create a new Angular application](### 0.2. Create a new Angular application)
-	0.3. [Deploy angular application locally](### 0.3. Deploy angular application locally)
-	0.4. [Build application](### 0.4. Build application)
-
 ## 0. Prerequirements
 
 ### 0.1.  Visual Studio Code
