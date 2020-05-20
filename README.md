@@ -313,7 +313,9 @@ In order to obtain information from a rest api using http requests, we will requ
 
 	It is very important that we use the word export so we can use it outside of this file.
 
-## 7. ngFor
+## 7. Directives
+
+### 7.1 ngFor
 
 If we want to load dynamically a lot of information without having to write them statically, we will need the ngFor directive. To use it, we have to move into any html where we would like to implement it and add the following things:
 
@@ -332,7 +334,7 @@ If we want to load dynamically a lot of information without having to write them
     <p class="card-text">{{ heroe.bio }}</p>
     <p class="card-text"><small class="text-muted">{{ heroe.aparicion }}</small></p>
     ```
-## 8. NgIf
+### 7.2. NgIf
 
 As we have work with ngFor which allows us to work with loops, we can work with conditions, so we can, for example, show information that we would like to appear, but only if fulfil a determinated condition. So, if we want to use it, then:
 
@@ -345,7 +347,7 @@ As we have work with ngFor which allows us to work with loops, we can work with 
 
    As we can see, we will only show the first element, if 'heroe.casa' equals to 'DC', and we will only show the second element if 'heroe.casa' equals 'Marvel'.
 
-## 9. ActivatedRoute
+## 8. ActivatedRoute
 
 If we want to obtain the parameter from the url, we will require to work with the ActivatedRoute.
 
@@ -391,7 +393,7 @@ If we want to obtain the parameter from the url, we will require to work with th
 
    Now we will need to use this information that we obtained and print this information in our html (or whatever that we need to do with it).
 
-## 10. Pipes
+## 9. Pipes
 
 Pipes allows us to transform displayed values using templates, so we are able to transform values of type currency, date, decimal, percent, json, or even make other type of transformations like to uppercase, lowecase, etc.
 
@@ -413,7 +415,7 @@ If we want to transform a string to lowercase, we have to use it this way:
 <h1>{{ heroe.nombre | lowercase }}</h1>
 ```
 
-### 10.1. Slice
+### 9.1. Slice
 
 If we want to catch a fragment of a string or an array, we have to use it this way:
 
@@ -429,7 +431,7 @@ This way we obtain the elements between the position zero and position three:
 <h1>{{ heroe.nombre | slice:0:3 }}</h1>
 ```
 
-### 10.2. Decimal
+### 9.2. Decimal
 
 If we want to convert an element to a number type with just 3 decimals, then we will do it like this:
 
@@ -455,7 +457,7 @@ If we want to obtain all integer numbers and only two decimals:
 <td>{{ pi | number:'.0-2' }}</td>
 ```
 
-### 10.3. Percentage
+### 9.3. Percentage
 
 If we want to convert an element to percentage, we will have to put it like this:
 
@@ -469,7 +471,7 @@ And if we want to show one decimal, then we will have to put it like this;
 <td>{{ percentage | percent:'2.0-2' }}</td>
 ```
 
-### 10.4. Currency
+### 9.4. Currency
 
 If we want to convert an element to a type currency, then:
 
@@ -489,7 +491,7 @@ If we want it without decimals, then we will have to work with more than one arg
 <td>{{ salary | currency:'EUR':'symbol-narrow':'.0-0' }}</td>
 ```
 
-### 10.4. Json
+### 9.5. Json
 
 If we want to parse json code and see its content, then:
 
@@ -499,7 +501,7 @@ If we want to parse json code and see its content, then:
 
 If we are working with bootstrap, we can use the tag pre wich allows us to see it with a better format.
 
-### 10.4. Async
+### 9.6. Async
 
 This pipe doesn't work with arguments, but we have an expression.
 If we want to work with it, we will have to construct a promise or an observable and we will obtain the data from any http response:
@@ -508,7 +510,7 @@ If we want to work with it, we will have to construct a promise or an observable
 <td>{{ promise | async  }}</td>
 ```
 
-### 10.5 Date
+### 9.7 Date
 
 If we want to parse a date, then we will have to work like this:
 
@@ -536,7 +538,7 @@ And of course, if we want to work with a custom date, we can use it like this:
 <td>{{ birthday: date:'MMMM - dd' }}</td>
 ```
 
-### 10.6 Custom pipes 
+### 9.8 Custom pipes 
 
 If we want to create a new pipe, we will have to execute the following command:
 
@@ -580,7 +582,7 @@ export class CapitalizedPipe implements PipeTransform {
 
 What this does is transform the entry name and transform each of the words (if 'all' equals true) to upper case and only the first letter of the first word (if 'all' equals false) to upper case.
 
-### 10.7 DomSanitizer
+### 9.9 DomSanitizer
 
 Now let's see something very useful. Imagine you want to add any external link into your application, like a video from youtube and you just copy the iframe with the src like this:
 
@@ -614,7 +616,7 @@ And if we want to use it, we will have to change our url like this:
 <iframe width="560" height="315" [src]="videoUrl | domseguro" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 ```
 
-## 11. Search
+## 10. Search
 
 If we want to implement a way to make a search in Angular, we can use, for example, an input of type text and a button in this way:
 
@@ -648,7 +650,7 @@ In the button, we have implemented a (click) function, which, as we can see, wor
 
 After this point, we may want to redirect to another component after making click on the button and pass this text that we want to search. If we want to do that, then we will need to repeat the same steps wa have done in the Routes and ActivatedRoute.
 
-## 12. Add other languages to our application
+## 11. Add other languages to our application
 
 First of all, If we want to work with a specific language in our application, then we will have to install this:
 
@@ -694,9 +696,9 @@ We can even create a new variable called language of type string and setted by d
 </tr>
 ```
 
-## 13. Work with HTTP Requests
+## 12. Work with HTTP Requests
 
-### 13.0. Configuration
+### 12.0. Configuration
 
 First of all, we will need to import the following module in our app.module.ts and add it into our 'imports' part:
 
@@ -714,7 +716,7 @@ import { HttpClientModule } from '@angular/common/http';
 export class AppModule { }
 ```
 
-### 13.1. Get Call
+### 12.1. Get Call
 
 After this we will need to add the HttpClient in our constructor of the component where we will use it and we will be ready to work with it:
 
@@ -729,7 +731,7 @@ constructor(private http: HttpClient) {
 
 This implementation is not the best way to do it. If we want to work with it better, we have to create a new service and import there the 'HttpClient' class. After this, we just have to call the service in our component and inject it in our constructor.
 
-### 13.2 Map Operator
+### 12.2 Map Operator
 
 The map operators is a more better way to work with http responses, which allows us to filter them and receive in our components the information we require. In other words, it allows us to filter it.
 
@@ -748,7 +750,7 @@ return this.http.get(url, { headers })
 
 What this does is help us to return the data we are interested on and not all of it.
 
-### 13.3 Automatic authentication with Tokens.
+### 12.3 Automatic authentication with Tokens.
 
 Now if we want to work with tokens, then...
 
