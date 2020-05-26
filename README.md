@@ -102,7 +102,38 @@ npm install -g firebase-tools
 
 4. Now add a Jumbotron component from bootstrap into the home.component.html
 
-## 3. Create two new components: search and heroe
+## 3. Create components
+
+### 3.0. Overview
+
+We can create components using this command:
+
+```
+ng generate component components/user -is -it
+```
+
+or
+
+```
+ng g c components/user -is -it
+```
+
+As we can see:
+
+* g is for generate
+* c is for component
+* is is for inline style
+* it is for inline template
+
+If we want to avoid creating a new folder inside the new component's destiny folder, then we need to work this way:
+
+```
+ng g c components/user/newUser -is -it --flat
+```
+
+* flat is the new parameter that we are going to need to use
+
+### 3.1. Create two new components: search and heroe
 
 1. Create a new component called about: ng g c components/about
 
@@ -110,7 +141,24 @@ npm install -g firebase-tools
 
    1. The -is means inline css which doesn't create a css style file
 
+### 3.2. Life cycle of a component
+
+We have different methods:
+
+* ngOnInit: this triggers when component is initializating (after the 'ngOnChanges').
+* ngOnChanges: this triggers when data of properties of our component changes in some way.
+* ngDoCheck: this triggers when executes a review of the detection of changes of the cycle (whenever a change happends).
+* ngAfterContentInit: this triggers after insert any content.
+* ngAfterContentChecked: this triggers after having reviewd the inserted content.
+* ngAfterViewInit: this triggers after each component has been initialized (even child components).
+* ngAfterViewChecked: this triggers after each of the components has been reviewed (even child components).
+* ngOnDestroy: this triggers when we destroy the component or move to another view.
+
+For more information about this, visit [Lifecycle hooks](https://angular.io/guide/lifecycle-hooks).
+
 ## 4. Use Routes in Angular
+
+### 4.0. Simple routing
 
 1. Create a new file named app.routes.ts inside the app component.
 
@@ -225,6 +273,81 @@ npm install -g firebase-tools
             this.router.navigate(['/heroe', idx]);
         }
         ```
+
+### 4.1. Sub routing
+
+If we want to work with sub routes in our application, we need to move first to our app.routes.ts and inside any route, we will need to work with a new attribute called children like this:
+
+```typescript
+const APP_ROUTES: Routes = [
+    { 
+        path: 'user/:id',
+        component: UserComponent,
+        children: [
+           { path: 'new', component: NewUserComponent },
+           { path: 'edit', component: EditUserComponent },
+           { path: 'detail', component: DetailUserComponent },
+           { path: '**', pathMatch: 'full', redirectTo: 'new'},
+        ]
+    }
+];
+```
+
+If we want to simplify this, we can even create a 'user.routes.ts' with this content:
+
+```typescript
+import { Routes } from '@angular/router';
+import { NewUserComponent } from './new-user.component';
+import { EditUserComponent } from './edit-user.component';
+import { DetailUserComponent } from './detail-user.component';
+
+export const USER_ROUTES: Routes = [
+    { path: 'new', component: NewUserComponent },
+    { path: 'edit', component: EditUserComponent },
+    { path: 'detail', component: DetailUserComponent },
+    { path: '**', pathMatch: 'full', redirectTo: 'new'},
+];
+```
+
+And then, in our 'app.routes.ts', we will import our 'USER_ROUTES' and use it in the children attribute of the path 'user': 
+
+```typescript
+import { Routes, RouterModule } from '@angular/router';
+
+import { HomeComponent } from './components/home/home.component';
+import { UserComponent } from './components/user/user.component';
+import { USER_ROUTES } from './components/user/user.routes';
+
+const APP_ROUTES: Routes = [
+    { path: 'home', component: HomeComponent },
+    { 
+        path: 'user/:id',
+        component: UserComponent,
+        children: USER_ROUTES
+    },
+    { path: '**', pathMatch: 'full', redirectTo: 'home'},
+];
+
+export const APP_ROUTING = RouterModule.forRoot(APP_ROUTES);
+```
+
+Finally, if we want to obtain any parameter from our parent route, we will require to import the ActivatedRoute, and subscribe to it. Example:
+
+```typescript
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
+export class NewUserComponent implements OnInit {
+  constructor(private router: ActivatedRoute) {
+    this.router.parent.params.subscribe(params => {
+      console.log('Child route');
+      console.log(params);
+    });
+  }
+}
+```
+
+The most peculiar thing of this, is that the router includes the parent: 'this.router.PARENT.params.subscribe'...
 
 ## 5. Add animation to the transition
 
@@ -401,7 +524,30 @@ This allows us to add and remove css classes on an HTML element. Example of this
 
 Here we can see a button which has a property called 'ngClass' which whenever the danger (of type boolean) property changes between true and false, it sets or remove one or another class (btn-danger and btn-info)
 
-### 7.5. Custom Directives
+### 7.5. NgSwitch
+
+This directive works like a normal switch, and in this example we are going to create a new component and in it we are going to create a new variable named alert of type string and with its value set to info, so now in the html we will use this like this:
+
+```html
+<div [ngSwitch]="alert">
+    <div *ngSwitchCase="'success'">
+    Success
+    </div>
+    <div *ngSwitchCase="'info'">
+    Info
+    </div>
+    <div *ngSwitchCase="'warning'">
+    Warning
+    </div>
+    <div *ngSwitchDefault>
+    Danger
+    </div>
+</div>
+```
+
+So in this case we will only see the Info value.
+
+### 7.6. Custom Directives
 
 If we want to create a custom directive. For this example, we are going to create a directive capable of 'highlight' any element by changing its background. So we need to execute the following command:
 
@@ -441,6 +587,20 @@ Finally, we will need to call the property in our html element:
 
 ```html
 <p appHighlight>Test</p>
+```
+
+Now, if we want to pass any value to the directive, like for example, we want to pass the color instead of use always yellow, then we will need to change our html element:
+
+```html
+<p [appHighlight]="'orange'">Test</p>
+```
+
+And after this, we will need to import 'Input' in our directive, create a new variable that will intercept this value that we are passing (in this case, the variable 'appHighlight'):
+
+```typescript
+import { Input } from '@angular/core';
+
+@Input("appHighlight") newColour: string;
 ```
 
 ## 8. ActivatedRoute
