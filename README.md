@@ -115,7 +115,7 @@ ng generate component components/user -is -it
 or
 
 ```
-ng g c components/user -is -it
+ng g c components/user -is -it --skipTests
 ```
 
 As we can see:
@@ -124,6 +124,7 @@ As we can see:
 * c is for component
 * is is for inline style
 * it is for inline template
+* skipTests is for avoid the creation of a file for testing this component
 
 If we want to avoid creating a new folder inside the new component's destiny folder, then we need to work this way:
 
@@ -1011,6 +1012,61 @@ What this does is help us to return the data we are interested on and not all of
 Now if we want to work with tokens, then...
 
 //TODO
+
+## 13. Authentication
+
+### 13.1. Authentication with Auth0
+
+Follow the instructions that use in its page:
+
+https://auth0.com/
+
+https://manage.auth0.com/dashboard/eu/dev-96kp59za/
+
+### 13.2 Add an Authentication Guard
+
+ng g guard services/auth
+
+### 13.3. Traditional authentication
+
+## 14. Forms
+
+### 14.0.  Requirements
+
+If we want to work with forms, we will need first to import the 'FormsModule' in the app.module.ts like this:
+
+```typescript
+import { FormsModule } from '@angular/forms';
+
+@NgModule({
+  declarations: [],
+  imports: [
+    FormsModule,
+  ],
+  providers: []
+})
+```
+
+### 14.1. ngModel
+
+So, the first directive we are going to work with when we need to interact with a form is the ngModel. This directive will capture the value that we have in a variable created inside the component and will show the content if it's filled.
+
+``` html
+<input type="text" 
+       name="email" 
+       [(ngModel)]="user.email"
+       placeholder="Email">
+```
+
+### 14.2. ngSubmit
+
+If we want to send this information when clicking a button, then we will require to add a ngSubmit directive in our form like this:
+
+```html
+<form (ngSubmit)="onSubmit()"></form>
+```
+
+And after this, we will need to create this function in our component.ts
 
 
 ## X. Auto reload for clients after deploy
