@@ -873,6 +873,32 @@ And if we want to use it, we will have to change our url like this:
 <iframe width="560" height="315" [src]="videoUrl | domseguro" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 ```
 
+### 9.10 Map
+
+If we want to filter the data that we return to the component when we are calling to an external service, we can use the function 'map' to take the part that we are interested most in. For example, imagine we want to obtain the token when we call to our back service for make a login in our application:
+
+```typescript
+return this.http.post(
+	`${this.url}signUp?key=${this.apiKey}`,
+	authData
+).pipe(
+	map(resp => {
+		this.saveToken(resp['idToken']);
+		return resp;
+	})
+);
+```
+
+the first value from the post would be the url and the next one the data that we are sending (user and password in this case). After calling the post, we call the pipe function and pass a map function as an argument which only takes from the respones the 'idToken' and send it to a function that will save it in the local storage.
+
+For this, we need to import this:
+
+```typescript
+import { map } from 'rxjs/operators';
+```
+
+*[There is more information about this in the point 12]*
+
 ## 10. Search
 
 If we want to implement a way to make a search in Angular, we can use, for example, an input of type text and a button in this way:
@@ -1009,9 +1035,23 @@ What this does is help us to return the data we are interested on and not all of
 
 ### 12.3. Automatic authentication with Tokens.
 
-Now if we want to work with tokens, then...
+Now if we want to work with tokens, then we need first to create a back capable of return a token whenever the login was correct (passing a user and a password for example). After this, when the back returns to us a token, we need to store it somewhere:
 
-//TODO
+#### 12.3.1 LocalStorage
+
+We can use the local storage of the web browser to store this information that we may require at some point if we want to avoid to store the user and password as this information may be too sensitive and may.
+
+In order to store it, we will do it as follows:
+
+```typescript
+localStorage.setItem('token', idToken);
+```
+
+In order to retrieve the token, we will do it as follows:
+
+```typescript
+localStorage.getItem('token');
+```
 
 ## 13. Authentication
 
@@ -1025,9 +1065,60 @@ https://manage.auth0.com/dashboard/eu/dev-96kp59za/
 
 ### 13.2 Add an Authentication Guard
 
-ng g guard services/auth
+If we want to generate a service capable of protect our routes, we can generate a guard using this command:
 
-### 13.3. Traditional authentication
+```
+ng g g guards/auth
+```
+
+where the first g stands for generate and the second g stands for guard, and will create something like this:
+
+```typescript
+import { Injectable } from '@angular/core';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+  canActivate(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return true;
+  }
+}
+```
+
+So now, we could use it in order to protect our URLs when, for example, we don't have a token in our local storage, because it has been deleted. So, we could create in our authentication service a method like this:
+
+```typescript
+authenticated(): boolean {
+    return this.userToken.length > 2;
+}
+```
+
+Now change our CanActivate method from the guard like this:
+
+```typescript
+canActivate(): boolean {
+    if(this.auth.authenticated()) {
+      return true;
+    } else {
+      this.router.navigateByUrl('/login');
+    }
+}
+```
+
+And finally, add this to our routing module, in the specified route that we want to protect:
+
+```typescript
+{ path: 'home'    , component: HomeComponent, canActivate: [AuthGuard] }
+```
+
+### 13.3. Logout
+
+In order to perform a logout, we could just remove from our localStorage the token. We can also validate if our token is still valid by evaluating if our date is grater than the valid date.
 
 ## 14. Forms
 
@@ -1052,9 +1143,13 @@ import { FormsModule } from '@angular/forms';
 So, the first directive we are going to work with when we need to interact with a form is the ngModel. This directive will capture the value that we have in a variable created inside the component and will show the content if it's filled.
 
 ``` html
+<span *ngIf="f.submitted && f.controls['email'].errors"
+	 class="text-danger">Email is required</span>
 <input type="text" 
        name="email" 
        [(ngModel)]="user.email"
+       required
+       email
        placeholder="Email">
 ```
 
@@ -1065,6 +1160,15 @@ If we want to send this information when clicking a button, then we will require
 ```html
 <form (ngSubmit)="onSubmit()"></form>
 ```
+
+Or we can use it this way:
+
+```html
+<form (ngSubmit)="onSubmit(f)"
+	 #f="ngForm"></form>
+```
+
+If we want to pass an argument to the function.
 
 And after this, we will need to create this function in our component.ts
 
