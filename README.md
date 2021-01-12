@@ -1153,6 +1153,12 @@ So, the first directive we are going to work with when we need to interact with 
        placeholder="Email">
 ```
 
+We can set the ngModel without the brackets and relating it to any object, like this:
+
+```html
+<input ngModel>
+```
+
 ### 14.2. ngSubmit
 
 If we want to send this information when clicking a button, then we will require to add a ngSubmit directive in our form like this:
@@ -1165,13 +1171,143 @@ Or we can use it this way:
 
 ```html
 <form (ngSubmit)="onSubmit(f)"
-	 #f="ngForm"></form>
+	  #f="ngForm"></form>
 ```
 
 If we want to pass an argument to the function.
 
 And after this, we will need to create this function in our component.ts
 
+### 14.3. Validations
+
+If we want to add a validation, for example a specific class when our control has some error, then, we can do it this way:
+
+```html
+<input class="form-control is-invalid"
+       type="text"
+       name="name"
+       [class.is-invalid]="name.invalid && name.touched"
+       [ngModel]="user.name"
+       placeholder="Name"
+       required
+       minlength="5"
+       #name="ngModel">
+```
+
+We can also add a pattern to this validation:
+
+```html
+<input class="form-control"
+       type="email"
+       placeholder="Email"
+       [class.is-invalid]="email.invalid && email.touched"
+       ngModel
+       name="email"
+       required
+       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+       #email="ngModel">
+```
+
+We also can add an error message to specify what is happening:
+
+```html
+<small *ngIf="nombre.invalid && nombre.touched"
+       class="form-text text-danger">Ingrese 5 letras</small>
+```
+
+### 14.4. Controls
+
+In order to work with the forms, we will be able to use a wide variety of controls. This are the most commonly used
+
+#### 14.4.1. Input
+
+In the input, we can use whichever of this properties:
+
+* class
+* type
+* placeholder
+* [class]
+* [ngModel]
+* [disabled]
+* *ngIf
+* *ngFor
+* name
+* pattern
+* required
+* #propertyCustom*
+
+*propertyCustom will be any value that we want to give it. It will be use as a key to refer to this specific control.
+
+#### 14.4.2. Select
+
+In the select, we can use whichever of this properties:
+
+* class
+* [class]
+* [ngModel]
+* [disabled]
+* *ngIf
+* *ngFor
+* name
+* required
+* #propertyCustom : this will be any value that we want to give it. It will be use as a key to refer to this specific control.
+
+And we will also generate a control inside it with the tag option which will contain each value of the select and the properties:
+
+* *ngFor
+* [value] : this will be the key of each value inside the select
+
+#### 14.4.3. Radio
+
+Example of this control:
+
+```html
+<div class="form-group row">
+    <label class="col-2 col-form-label">Genero</label>
+    <div class="col-8">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input"
+              type="radio"
+              name="genero"
+              value="M"
+              [class.is-invalid]="genero.invalid && genero.touched"
+              required
+              [ngModel]="user.genero"
+              #genero="ngModel">
+        <label class="form-check-label">Masculino</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input"
+              type="radio"
+              name="genero"
+              value="F"
+              [class.is-invalid]="genero.invalid && genero.touched"
+              required
+              [ngModel]="user.genero"
+              #genero="ngModel">
+        <label class="form-check-label">Femenino</label>
+      </div>
+    </div>
+  </div>
+```
+
+### 15. Reactive Forms
+
+#### 15.0. Requirements
+
+If we want to work with reactive forms, we will need first to import the 'ReactiveFormsModule' in the app.module.ts like this:
+
+```typescript
+import { ReactiveFormsModule } from '@angular/forms';
+
+@NgModule({
+  declarations: [],
+  imports: [
+    ReactiveFormsModule,
+  ],
+  providers: []
+})
+```
 
 ## X. Auto reload for clients after deploy
 
