@@ -1291,9 +1291,9 @@ Example of this control:
   </div>
 ```
 
-### 15. Reactive Forms
+## 15. Reactive Forms
 
-#### 15.0. Requirements
+### 15.0. Requirements
 
 If we want to work with reactive forms, we will need first to import the 'ReactiveFormsModule' in the app.module.ts like this:
 
@@ -1307,6 +1307,223 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   providers: []
 })
+```
+
+### 15.1. Use Form
+
+First, we will create our form and we will link it with the formBuilder:
+
+```typescript
+import { FormBuilder, FormGroup } from '@angular/forms';
+
+form: FormGroup;
+
+this.form = this.formBuilder.group({
+      name: [''],
+});
+```
+
+After this, we will require to add it to our html:
+
+```html
+<form autocomplete="off" [formGroup]="form" (ngSubmit)="save()">
+    <input class="form-control" type="text" placeholder="Nombre" formControlName="name">
+</form>
+```
+
+If we want to add validations, we will work with Validators, and here is an example:
+
+```typescript
+import { Validators } from '@angular/forms';
+
+this.form = this.formBuilder.group({
+    nombre: ['', [Validators.required, Validators.minLength(5)]],
+    apellido: ['', Validators.required],
+    correo: ['', [Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$'), Validators.required]],
+});
+```
+
+We can also modify the classes from our html so that displays an error:
+
+```html
+<input class="form-control" 
+       type="text" 
+       placeholder="Nombre" 
+       formControlName="nombre"
+       [class.is-invalid]="nameNotValid">
+<small *ngIf="nameNotValid" class="text-danger">You need to insert 5 letters</small>
+```
+
+And in our typescript:
+
+```typescript
+get nameNotValid() {
+    return this.form.get('nombre').invalid && this.form.get('nombre').touched;
+}
+```
+
+And finally, we can make sure that everything is okay when clicking on save:
+
+```typescript
+save() {
+    if(this.form.invalid) {
+        return Object.values(this.form.controls).forEach(control => {
+            control.markAsTouched();
+        });
+    }
+}
+```
+
+If we have nested elements in our form, then we will need to construct like this:
+
+```typescript
+this.form = this.formBuilder.group({
+    nombre: ['', [Validators.required, Validators.minLength(5)]],
+    apellido: ['', Validators.required],
+    correo: ['', [Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$'), Validators.required]],
+    direccion: this.formBuilder.group({
+        distrito: ['', Validators.required],
+        ciudad: ['', Validators.required]
+    })
+});
+```
+
+```html
+<div class="form-group row" formGroupName="direccion">
+    <label class="col-2 col-form-label">Direccion</label>
+    <div class="form-row col">
+        <div class="col">
+            <input type="text"
+                   class="form-control"
+                   placeholder="Distrito"
+                   formControlName="distrito"
+                   [class.is-invalid]="distritNotValid">
+        </div>
+        <br>
+        <div class="col">
+            <input type="text"
+                   class="form-control"
+                   placeholder="Ciudad"
+                   formControlName="ciudad"
+                   [class.is-invalid]="cityNotValid">
+        </div>
+    </div>
+</div>
+```
+
+And if  we want to make sure everything was setted or not, and  thorw visually erros, then we will need to update our save method like this:
+
+```typescript
+save() {
+    if(this.form.invalid) {
+        return Object.values(this.form.controls).forEach(control => {
+            if(control instanceof FormGroup) {
+                Object.values(control.controls).forEach( control => control.markAsTouched());
+            }
+
+            control.markAsTouched();
+        });
+    }
+}
+```
+
+### 15.2. Custom Validators
+
+We create a new service like this:
+
+```typescript
+import { Injectable } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs';
+
+interface ErrorValidate {
+  [s:string]:boolean 
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ValidadoresService {
+
+    constructor() { }
+
+    existeUsuario(control: FormControl): Promise<any> | Observable<any> {
+        if(!control.value) {
+            return Promise.resolve(null);
+        }
+
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if(control.value === 'strider') {
+                    resolve({existe: true});
+                } else {
+                    resolve(null);
+                }
+            }, 3500);
+        });
+    }
+
+    noSample(control: FormControl): ErrorValidate {
+        if(control.value?.toLowerCase() === 'sample') {
+            return {
+                noHerrera: true
+            }
+        }    
+    }
+
+    passwordsIguales(pass1Name: string, pass2Name: string) {
+        return(formGroup: FormGroup) => {
+            const pass1Control = formGroup.controls[pass1Name];
+            const pass2Control = formGroup.controls[pass2Name];
+
+            if(pass1Control.value === pass2Control.value) {
+                pass2Control.setErrors(null);
+            } else {
+                pass2Control.setErrors({noEsIgual: true});
+            }
+        }
+    }
+}
+```
+
+We use them:
+
+```typescript
+createForm() {
+    this.form = this.formBuilder.group({
+        nombre: ['', [Validators.required, Validators.minLength(5)]],
+        apellido: ['', [Validators.required, this.validadores.noHerrera]],
+        correo: ['', [Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$'), Validators.required]],
+        //This one is async validator
+        usuario: ['', , this.validadores.existeUsuario],
+        pass1: ['', Validators.required],
+        pass2: ['', Validators.required],
+        direccion: this.formBuilder.group({
+            distrito: ['', Validators.required],
+            ciudad: ['', Validators.required]
+        }),
+        pasatiempos: this.formBuilder.array([
+        ])
+    }, {
+        Validators: this.validadores.passwordsIguales('pass1', 'pass2')
+    });
+}
+```
+
+### 15.3. Capture  changes
+
+We can also see if there has been any change in our form:
+
+```typescript
+createListeners() {
+    this.form.valueChanges.subscribe(value => {
+      console.log(value);
+    })
+
+    this.form.statusChanges.subscribe(status => {
+      console.log(status);
+    })
+  }
 ```
 
 ## X. Auto reload for clients after deploy
